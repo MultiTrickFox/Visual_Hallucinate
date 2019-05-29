@@ -8,7 +8,7 @@ from pickle import dump, load
 
 hm_iterations = 1_000
 
-hm_initial_population = 10#100#500
+hm_initial_population = 50#500
 
 crossover_chance = 0.2
 crossover_effect = 0.5
@@ -16,9 +16,11 @@ crossover_effect = 0.5
 mutation_chance = 0.4
 mutation_effect = 0.1
 
-hm_mostfits = 3#50#500
+hm_mostfits = 20#500
 
 target_class = 47
+
+train_mostfits = False  # will nn train the mostfits?
 
 
 
@@ -27,12 +29,15 @@ population = create_population(hm_initial_population)
 for _ in range(hm_iterations):
     print(f'Iterating: {_}')
 
-    population = cat([population.clone(), mutate_population(population.clone(), mutation_chance, mutation_effect)], 0)
+    population = cat([population, mutate_population(population.clone(), mutation_chance, mutation_effect)], 0)
     print(flush=True)
+
+    if train_mostfits:
+        population = mostfits(population, hm_mostfits, target_class)
+        print(flush=True)
+        population = cat([population.clone(), train_population(population.clone(), target_class)], 0)
+
     population = mostfits(population, hm_mostfits, target_class)
-    print(flush=True)
-    # population = cat([population.clone(), train_population(population.clone(), target_class)], 0)
-    # population = mostfits(population, hm_mostfits, target_class)
     print(flush=True)
 
     if _%10==0:

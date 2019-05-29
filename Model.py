@@ -19,7 +19,8 @@ def get_description(predicted_class):
     return class_descriptions[class_ids[predicted_class]]
 
 def scores(inputs, wrt_class):
-    return softmax(premodel(inputs), 1)[:, wrt_class]
+    with no_grad():
+        return softmax(premodel(inputs), 1)[:, wrt_class]
 
 
 def train_population(population, wrt_class):
