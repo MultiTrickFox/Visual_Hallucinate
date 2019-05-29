@@ -1,13 +1,32 @@
-# TODO (s) :
+from Model import scores, img_sizes
+from torch import randn, stack
+from random import random
 
 
-# from Model import score
+def create_population(hm):
+    return randn(hm, *img_sizes)
 
 
-# create (population) => create a list of images. ; channels,width,height
+def mutate_population(population, mutation_prob, mutation_effect):
+    hm_cols = img_sizes[-1]
+    # TODO : parallelize here.
+    for thing in population:
+        for channel in thing:
+            for row in channel:
+                for col_nr in range(hm_cols):
+                    if random() < mutation_prob:
+                        row[col_nr] += mutation_effect*random()
+    # return population
 
-# mutate (population) => a.pixel values *= mutation_effect (if rand() < mutation_prob)
 
 # crossover (population) => a += crossover_effect * b (if randn() < crossover_prob)
 
-# mostfits (population, hm_fits) => score(a) for all a in population ; sort & return top hm_fits
+
+def mostfits(population, hm, wrt_class):
+    sc = scores(population, wrt_class)
+    mostfits = []
+    for i in range(hm):
+        fit = sc.argmax()
+        mostfits.append(population[fit])
+        sc[fit] = 0
+    return stack(mostfits, 0)
