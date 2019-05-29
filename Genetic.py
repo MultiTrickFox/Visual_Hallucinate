@@ -1,6 +1,7 @@
 from Model import scores, img_sizes
 from torch import randn, stack
 from random import random
+from copy import deepcopy
 
 
 def create_population(hm):
@@ -8,6 +9,7 @@ def create_population(hm):
 
 
 def mutate_population(population, mutation_prob, mutation_effect):
+    population = deepcopy(population)
     hm_cols = img_sizes[-1]
     # TODO : parallelize here.
     for thing in population:
@@ -16,7 +18,7 @@ def mutate_population(population, mutation_prob, mutation_effect):
                 for col_nr in range(hm_cols):
                     if random() < mutation_prob:
                         row[col_nr] += mutation_effect*random()
-    # return population
+    return population
 
 
 # crossover (population) => a += crossover_effect * b (if randn() < crossover_prob)
